@@ -4,13 +4,9 @@ import { USER_ROLES } from '../../../enums/user';
 export type IUser = {
   name: string;
   role: USER_ROLES;
-  contact: string;
   email: string;
   password: string;
-  location: string;
   profile?: string;
-  status: 'active' | 'delete';
-  verified: boolean;
   authentication?: {
     isResetPassword: boolean;
     oneTimeCode: number;

@@ -23,32 +23,15 @@ const userSchema = new Schema<IUser, UserModal>(
       unique: true,
       lowercase: true,
     },
-    contact: {
-      type: String,
-      required: true,
-    },
     password: {
       type: String,
       required: true,
       select: 0,
       minlength: 8,
     },
-    location: {
-      type: String,
-      required: true,
-    },
     profile: {
       type: String,
       default: 'https://i.ibb.co/z5YHLV9/profile.png',
-    },
-    status: {
-      type: String,
-      enum: ['active', 'delete'],
-      default: 'active',
-    },
-    verified: {
-      type: Boolean,
-      default: false,
     },
     authentication: {
       type: {

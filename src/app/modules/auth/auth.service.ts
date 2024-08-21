@@ -25,22 +25,6 @@ const loginUserFromDB = async (payload: ILoginData) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
 
-  //check verified and status
-  if (!isExistUser.verified) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'Please verify your account, then try to login again'
-    );
-  }
-
-  //check user status
-  if (isExistUser.status === 'delete') {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'You don’t have permission to access this content.It looks like your account has been deactivated.'
-    );
-  }
-
   //check match password
   if (
     password &&
@@ -110,42 +94,28 @@ const verifyEmailToDB = async (payload: IVerifyEmail) => {
     );
   }
 
-  let message;
-  let data;
+  await User.findOneAndUpdate(
+    { _id: isExistUser._id },
+    {
+      authentication: {
+        isResetPassword: true,
+        oneTimeCode: null,
+        expireAt: null,
+      },
+    }
+  );
 
-  if (!isExistUser.verified) {
-    await User.findOneAndUpdate(
-      { _id: isExistUser._id },
-      { verified: true, authentication: { oneTimeCode: null, expireAt: null } }
-    );
-    message = 'Email verify successfully';
-  } else {
-    await User.findOneAndUpdate(
-      { _id: isExistUser._id },
-      {
-        authentication: {
-          isResetPassword: true,
-          oneTimeCode: null,
-          expireAt: null,
-        },
-      }
-    );
-
-    //create token ;
-    const createToken = cryptoToken();
-    await ResetToken.create({
-      user: isExistUser._id,
-      token: createToken,
-      expireAt: new Date(Date.now() + 5 * 60000),
-    });
-    message =
-      'Verification Successful: Please securely store and utilize this code for reset password';
-    data = createToken;
-  }
-  return { data, message };
+  //create token ;
+  const createToken = cryptoToken();
+  await ResetToken.create({
+    user: isExistUser._id,
+    token: createToken,
+    expireAt: new Date(Date.now() + 5 * 60000),
+  });
+  return createToken;
 };
 
-//forget password
+//reset password
 const resetPasswordToDB = async (
   token: string,
   payload: IAuthResetPassword

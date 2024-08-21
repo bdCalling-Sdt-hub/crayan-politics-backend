@@ -7,22 +7,19 @@ import { UserController } from './user.controller';
 import { UserValidation } from './user.validation';
 const router = express.Router();
 
-router.get(
-  '/profile',
-  auth(USER_ROLES.ADMIN, USER_ROLES.USER),
-  UserController.getUserProfile
+router.post(
+  '/create-admin',
+  validateRequest(UserValidation.createUserZodSchema),
+  UserController.createUser
 );
 
-router
-  .route('/')
-  .post(
-    validateRequest(UserValidation.createUserZodSchema),
-    UserController.createUser
-  )
-  .patch(
-    auth(USER_ROLES.ADMIN, USER_ROLES.USER),
-    fileUploadHandler(),
-    UserController.updateProfile
-  );
+router.get('/profile', auth(USER_ROLES.ADMIN), UserController.getUserProfile);
+
+router.patch(
+  '/update-profile',
+  auth(USER_ROLES.ADMIN),
+  fileUploadHandler(),
+  UserController.updateProfile
+);
 
 export const UserRoutes = router;
