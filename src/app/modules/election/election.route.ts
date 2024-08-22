@@ -5,7 +5,13 @@ import { ElectionController } from './election.controller';
 const router = express.Router();
 
 router
+  .route('/:id')
+  .patch(auth(USER_ROLES.ADMIN), ElectionController.updateElection)
+  .delete(auth(USER_ROLES.ADMIN), ElectionController.deleteElection);
+
+router
   .route('/')
+  .get(ElectionController.getAllElection)
   .post(auth(USER_ROLES.ADMIN), ElectionController.createElection);
 
-export const electionRoutes = router;
+export const ElectionRoutes = router;

@@ -6,7 +6,6 @@ import { ElectionService } from './election.service';
 
 const createElection = catchAsync(async (req: Request, res: Response) => {
   const { ...electionData } = req.body;
-
   const result = await ElectionService.createElectionToDB(electionData);
 
   sendResponse(res, {
@@ -17,6 +16,45 @@ const createElection = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllElection = catchAsync(async (req: Request, res: Response) => {
+  const result = await ElectionService.getAllElectionFromDB();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Election date retrieved successfully',
+    data: result,
+  });
+});
+
+const updateElection = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const { ...electionData } = req.body;
+  const result = await ElectionService.updateElectionFromDB(id, electionData);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Election date update successfully',
+    data: result,
+  });
+});
+
+const deleteElection = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await ElectionService.deleteElectionToDB(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Election date deleted successfully',
+    data: result,
+  });
+});
+
 export const ElectionController = {
   createElection,
+  getAllElection,
+  updateElection,
+  deleteElection,
 };
