@@ -6,7 +6,7 @@ export type IUser = {
   role: USER_ROLES;
   email: string;
   password: string;
-  profile?: string;
+  image?: string;
   authentication?: {
     isResetPassword: boolean;
     oneTimeCode: number;
