@@ -1,5 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
+import { SortOrder } from 'mongoose';
 import ApiError from '../../../errors/ApiError';
+import { paginationHelper } from '../../../helpers/paginationHelper';
+import { IPaginationOptions } from '../../../types/pagination';
 import { IVoterIssue } from './voterIssue.interface';
 import { VoterIssue } from './voterIssue.model';
 
@@ -11,9 +14,33 @@ const createVoterIssueToDB = async (payload: IVoterIssue) => {
   return createVoterIssue;
 };
 
-const getAllVoterIssueFromDB = async () => {
-  const result = await VoterIssue.find();
-  return result;
+const getAllVoterIssueFromDB = async (
+  paginationOptions: IPaginationOptions
+) => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(paginationOptions);
+
+  const sortConditions: { [key: string]: SortOrder } = {};
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+
+  const result = await VoterIssue.find()
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+  const total = await VoterIssue.countDocuments();
+  const totalPage = Math.ceil(total / limit);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPage,
+    },
+    data: result,
+  };
 };
 
 export const VoterIssueService = {

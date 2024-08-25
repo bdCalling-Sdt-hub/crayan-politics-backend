@@ -1,6 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
+import { paginationHelper } from '../../../helpers/paginationHelper';
 import unlinkFile from '../../../shared/unlinkFile';
+import { IFilterOptions, IPaginationOptions } from '../../../types/pagination';
 import { CandidateColorMapper } from './candidate.constant';
 import { ICandidate } from './candidate.interface';
 import { Candidate } from './candidate.model';
@@ -17,9 +19,46 @@ const addCandidateToDB = async (payload: ICandidate) => {
   return createCandidate;
 };
 
-const getAllCandidateFromDB = async () => {
-  const result = await Candidate.find();
-  return result;
+const getAllCandidateFromDB = async (
+  paginationOptions: IPaginationOptions,
+  filterOptions: IFilterOptions
+) => {
+  const { skip, limit, page, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(paginationOptions);
+  const { searchTerm } = filterOptions;
+
+  let andConditions = [];
+  if (searchTerm) {
+    andConditions.push({
+      $or: ['name', 'state', 'politicalAffiliation', 'election'].map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+      })),
+    });
+  }
+
+  const sortConditions: { [key: string]: string } = {};
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+
+  const whereConditions =
+    andConditions.length > 0 ? { $and: andConditions } : {};
+  const result = await Candidate.find(whereConditions).skip(skip).limit(limit);
+  const total = await Candidate.countDocuments(whereConditions);
+  const totalPage = Math.ceil(total / limit);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPage,
+    },
+    data: result,
+  };
 };
 
 const getSingleCandidateFromDB = async (id: string) => {

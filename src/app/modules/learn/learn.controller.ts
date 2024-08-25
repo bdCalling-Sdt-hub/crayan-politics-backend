@@ -1,5 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
+import { paginationFields } from '../../../shared/constrant';
+import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { LearnService } from './learn.service';
 
@@ -21,13 +23,15 @@ const createLearnTopic = catchAsync(async (req, res) => {
 });
 
 const getAllLearnTopic = catchAsync(async (req, res) => {
-  const result = await LearnService.getAllLearnTopicFromDB();
+  const paginationOptions = pick(req.query, paginationFields);
+  const result = await LearnService.getAllLearnTopicFromDB(paginationOptions);
 
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'Learn topic retrieve successfully',
-    data: result,
+    pagination: result.meta,
+    data: result.data,
   });
 });
 

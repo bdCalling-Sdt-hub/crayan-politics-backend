@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
+import { paginationFields } from '../../../shared/constrant';
+import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { StateService } from './state.service';
 
@@ -17,13 +19,15 @@ const createState = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllState = catchAsync(async (req: Request, res: Response) => {
-  const result = await StateService.getAllStateFromDB();
+  const paginationOptions = pick(req.query, paginationFields);
+  const result = await StateService.getAllStateFromDB(paginationOptions);
 
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'State retrieved successfully',
-    data: result,
+    pagination: result.meta,
+    data: result.data,
   });
 });
 

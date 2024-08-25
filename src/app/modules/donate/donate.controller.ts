@@ -4,6 +4,8 @@ import Stripe from 'stripe';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import catchAsync from '../../../shared/catchAsync';
+import { paginationFields } from '../../../shared/constrant';
+import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { DonateService } from './donate.service';
 const stripe = new Stripe(config.stipe_key_secret as string);
@@ -21,13 +23,15 @@ const createDonate = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllDonateList = catchAsync(async (req: Request, res: Response) => {
-  const result = await DonateService.getAllDonateFromDB();
+  const paginationOptions = pick(req.query, paginationFields);
+  const result = await DonateService.getAllDonateFromDB(paginationOptions);
 
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'Donate retrieved successfully',
-    data: result,
+    pagination: result.meta,
+    data: result.data,
   });
 });
 

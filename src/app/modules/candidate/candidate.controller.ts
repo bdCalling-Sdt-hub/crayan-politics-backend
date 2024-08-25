@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
+import { paginationFields } from '../../../shared/constrant';
+import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { CandidateService } from './candidate.service';
 
@@ -24,13 +26,19 @@ const addCandidate = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllCandidate = catchAsync(async (req: Request, res: Response) => {
-  const result = await CandidateService.getAllCandidateFromDB();
+  const paginationOptions = pick(req.query, paginationFields);
+  const filterOptions = pick(req.query, ['searchTerm']);
+  const result = await CandidateService.getAllCandidateFromDB(
+    paginationOptions,
+    filterOptions
+  );
 
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'All Candidate retrieved successfully',
-    data: result,
+    pagination: result.meta,
+    data: result.data,
   });
 });
 

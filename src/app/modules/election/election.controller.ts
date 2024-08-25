@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
+import { paginationFields } from '../../../shared/constrant';
+import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { ElectionService } from './election.service';
 
@@ -17,13 +19,15 @@ const createElection = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllElection = catchAsync(async (req: Request, res: Response) => {
-  const result = await ElectionService.getAllElectionFromDB();
+  const paginationOptions = pick(req.query, paginationFields);
+  const result = await ElectionService.getAllElectionFromDB(paginationOptions);
 
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'Election date retrieved successfully',
-    data: result,
+    pagination: result.meta,
+    data: result.data,
   });
 });
 

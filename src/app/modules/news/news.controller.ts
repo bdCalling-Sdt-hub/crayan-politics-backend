@@ -1,5 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
+import { paginationFields } from '../../../shared/constrant';
+import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { NewsService } from './news.service';
 
@@ -21,13 +23,15 @@ const createNews = catchAsync(async (req, res) => {
 });
 
 const getAllNews = catchAsync(async (req, res) => {
-  const result = await NewsService.getAllNewsFromDB();
+  const paginationOptions = pick(req.query, paginationFields);
+  const result = await NewsService.getAllNewsFromDB(paginationOptions);
 
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'All news retrieve successfully',
-    data: result,
+    pagination: result.meta,
+    data: result.data,
   });
 });
 
