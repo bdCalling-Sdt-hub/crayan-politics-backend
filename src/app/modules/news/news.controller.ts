@@ -43,6 +43,17 @@ const getSingleNews = catchAsync(async (req, res) => {
   });
 });
 
+const getTopNews = catchAsync(async (req, res) => {
+  const result = await NewsService.getTopNewsFromDB();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Top news retrieve successfully',
+    data: result,
+  });
+});
+
 const updateNews = catchAsync(async (req, res) => {
   const id = req.params.id;
   let image;
@@ -79,4 +90,5 @@ export const NewsController = {
   deleteNews,
   updateNews,
   getSingleNews,
+  getTopNews,
 };

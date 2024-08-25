@@ -24,7 +24,6 @@ const addCandidate = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllCandidate = catchAsync(async (req: Request, res: Response) => {
-  console.log(req);
   const result = await CandidateService.getAllCandidateFromDB();
 
   sendResponse(res, {

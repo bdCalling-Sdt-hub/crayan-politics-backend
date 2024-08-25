@@ -24,6 +24,10 @@ const getSingleNewsFromDB = async (id: string) => {
   }
   return isExist;
 };
+const getTopNewsFromDB = async () => {
+  const isExist = await News.findOne().sort({ createdAt: 'desc' });
+  return isExist;
+};
 
 const updateNewsToDB = async (id: string, payload: INews) => {
   console.log(payload);
@@ -58,4 +62,5 @@ export const NewsService = {
   deleteNewsFromDB,
   updateNewsToDB,
   getSingleNewsFromDB,
+  getTopNewsFromDB,
 };

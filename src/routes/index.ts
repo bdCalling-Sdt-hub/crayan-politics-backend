@@ -1,6 +1,7 @@
 import express from 'express';
 import { AuthRoutes } from '../app/modules/auth/auth.route';
 import { CandidateRoutes } from '../app/modules/candidate/candidate.route';
+import { DonateRoutes } from '../app/modules/donate/donate.route';
 import { ElectionRoutes } from '../app/modules/election/election.route';
 import { FaqRoutes } from '../app/modules/faq/faq.route';
 import { FeedbackRoutes } from '../app/modules/feedback/feedback.route';
@@ -10,6 +11,7 @@ import { RuleRoutes } from '../app/modules/rule/rule.route';
 import { StateRoutes } from '../app/modules/state/state.route';
 import { SubscribeRoutes } from '../app/modules/subscribe/subscribe.route';
 import { UserRoutes } from '../app/modules/user/user.route';
+import { VoterIssueRoutes } from '../app/modules/voterIssue/voterIssue.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -56,6 +58,14 @@ const apiRoutes = [
   {
     path: '/news',
     route: NewsRoutes,
+  },
+  {
+    path: '/voter-issue',
+    route: VoterIssueRoutes,
+  },
+  {
+    path: '/donate',
+    route: DonateRoutes,
   },
 ];
 

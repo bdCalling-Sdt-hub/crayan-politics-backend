@@ -12,6 +12,8 @@ router.post(
   NewsController.createNews
 );
 
+router.get('/top-news', NewsController.getTopNews);
+
 router
   .route('/:id')
   .get(NewsController.getSingleNews)
