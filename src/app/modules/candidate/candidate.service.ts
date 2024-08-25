@@ -25,7 +25,7 @@ const getAllCandidateFromDB = async (
 ) => {
   const { skip, limit, page, sortBy, sortOrder } =
     paginationHelper.calculatePagination(paginationOptions);
-  const { searchTerm } = filterOptions;
+  const { searchTerm, ...otherFilters } = filterOptions;
 
   let andConditions = [];
   if (searchTerm) {
