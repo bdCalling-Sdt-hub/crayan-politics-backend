@@ -14,6 +14,13 @@ router.post(
 
 router.get('/top-news', NewsController.getTopNews);
 
+router.patch(
+  '/highlight/:id',
+  auth(USER_ROLES.ADMIN),
+  NewsController.highlightNews
+);
+router.get('/highlight', NewsController.getAllHighlightNews);
+
 router
   .route('/:id')
   .get(NewsController.getSingleNews)

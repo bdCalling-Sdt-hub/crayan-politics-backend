@@ -24,7 +24,11 @@ const createNews = catchAsync(async (req, res) => {
 
 const getAllNews = catchAsync(async (req, res) => {
   const paginationOptions = pick(req.query, paginationFields);
-  const result = await NewsService.getAllNewsFromDB(paginationOptions);
+  const filterOptions = pick(req.query, ['searchTerm']);
+  const result = await NewsService.getAllNewsFromDB(
+    paginationOptions,
+    filterOptions
+  );
 
   sendResponse(res, {
     success: true,
@@ -88,6 +92,30 @@ const deleteNews = catchAsync(async (req, res) => {
   });
 });
 
+//highlight news
+const getAllHighlightNews = catchAsync(async (req, res) => {
+  const result = await NewsService.getAllHighlightNewsFromDB();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Top news retrieve successfully',
+    data: result,
+  });
+});
+
+const highlightNews = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const result = await NewsService.highlightNewsToDB(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'News highlight successfully',
+    data: result,
+  });
+});
+
 export const NewsController = {
   createNews,
   getAllNews,
@@ -95,4 +123,6 @@ export const NewsController = {
   updateNews,
   getSingleNews,
   getTopNews,
+  getAllHighlightNews,
+  highlightNews,
 };

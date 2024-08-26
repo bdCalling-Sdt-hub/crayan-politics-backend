@@ -1,7 +1,9 @@
+import { StatusCodes } from 'http-status-codes';
 import { model, Schema } from 'mongoose';
-import { INews } from './news.interface';
+import ApiError from '../../../errors/ApiError';
+import { INews, NewsModel } from './news.interface';
 
-const newsSchema = new Schema<INews>(
+const newsSchema = new Schema<INews, NewsModel>(
   {
     title: {
       type: String,
@@ -15,8 +17,26 @@ const newsSchema = new Schema<INews>(
       type: String,
       required: true,
     },
+    highlight: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
 
-export const News = model('News', newsSchema);
+newsSchema.statics.highlightSwitcher = async (id: string): Promise<any> => {
+  const isExist = await News.findById(id);
+  if (!isExist) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "News doesn't exist!");
+  }
+
+  const updateNews = await News.findOneAndUpdate(
+    { _id: id },
+    { $set: { highlight: !isExist.highlight } },
+    { new: true }
+  );
+  return updateNews;
+};
+
+export const News = model<INews, NewsModel>('News', newsSchema);

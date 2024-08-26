@@ -39,6 +39,14 @@ const getAllCandidateFromDB = async (
     });
   }
 
+  if (Object.keys(otherFilters).length) {
+    andConditions.push({
+      $and: Object.entries(otherFilters).map(([field, value]) => ({
+        [field]: value,
+      })),
+    });
+  }
+
   const sortConditions: { [key: string]: string } = {};
   if (sortBy && sortOrder) {
     sortConditions[sortBy] = sortOrder;

@@ -27,7 +27,7 @@ const addCandidate = catchAsync(async (req: Request, res: Response) => {
 
 const getAllCandidate = catchAsync(async (req: Request, res: Response) => {
   const paginationOptions = pick(req.query, paginationFields);
-  const filterOptions = pick(req.query, ['searchTerm', 'state']);
+  const filterOptions = pick(req.query, ['searchTerm', 'state', 'election']);
   const result = await CandidateService.getAllCandidateFromDB(
     paginationOptions,
     filterOptions

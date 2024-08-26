@@ -3,7 +3,7 @@ import { SortOrder } from 'mongoose';
 import ApiError from '../../../errors/ApiError';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import unlinkFile from '../../../shared/unlinkFile';
-import { IPaginationOptions } from '../../../types/pagination';
+import { IFilterOptions, IPaginationOptions } from '../../../types/pagination';
 import { INews } from './news.interface';
 import { News } from './news.model';
 
@@ -15,17 +15,36 @@ const createNewsToDB = async (payload: INews) => {
   return createNews;
 };
 
-const getAllNewsFromDB = async (paginationOptions: IPaginationOptions) => {
+const getAllNewsFromDB = async (
+  paginationOptions: IPaginationOptions,
+  filterOptions: IFilterOptions
+) => {
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(paginationOptions);
+  const { searchTerm } = filterOptions;
 
   const sortConditions: { [key: string]: SortOrder } = {};
   if (sortBy && sortOrder) {
     sortConditions[sortBy] = sortOrder;
   }
 
-  const result = await News.find().sort(sortConditions).skip(skip).limit(limit);
-  const total = await News.countDocuments();
+  let searchConditions = {};
+  if (searchTerm) {
+    searchConditions = {
+      $or: ['title', 'description'].map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+      })),
+    };
+  }
+
+  const result = await News.find(searchConditions)
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+  const total = await News.countDocuments(searchConditions);
   const totalPage = Math.ceil(total / limit);
 
   return {
@@ -46,6 +65,7 @@ const getSingleNewsFromDB = async (id: string) => {
   }
   return isExist;
 };
+
 const getTopNewsFromDB = async () => {
   const isExist = await News.findOne().sort({ createdAt: 'desc' });
   return isExist;
@@ -78,6 +98,18 @@ const deleteNewsFromDB = async (id: string) => {
   return isExist;
 };
 
+//highlight
+
+const getAllHighlightNewsFromDB = async () => {
+  const result = await News.find({ highlight: { $eq: true } });
+  return result;
+};
+
+const highlightNewsToDB = async (id: string) => {
+  const updateDoc = await News.highlightSwitcher(id);
+  return updateDoc;
+};
+
 export const NewsService = {
   createNewsToDB,
   getAllNewsFromDB,
@@ -85,4 +117,6 @@ export const NewsService = {
   updateNewsToDB,
   getSingleNewsFromDB,
   getTopNewsFromDB,
+  highlightNewsToDB,
+  getAllHighlightNewsFromDB,
 };
