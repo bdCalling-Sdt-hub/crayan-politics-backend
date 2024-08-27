@@ -4,6 +4,8 @@ import auth from '../../middlewares/auth';
 import { VoterIssueController } from './voterIssue.controller';
 const router = express.Router();
 
+router.get('/is-issue-submit', VoterIssueController.getIsIssueSubmit);
+
 router
   .route('/')
   .get(auth(USER_ROLES.ADMIN), VoterIssueController.getAllVoterIssue)

@@ -36,7 +36,20 @@ const getAllVoterIssue = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getIsIssueSubmit = catchAsync(async (req: Request, res: Response) => {
+  const ip = req._remoteAddress;
+  const result = await VoterIssueService.getIsIssueSubmitFromDB(ip);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'VoterIssue retrieved successfully',
+    data: result,
+  });
+});
+
 export const VoterIssueController = {
   createVoterIssue,
   getAllVoterIssue,
+  getIsIssueSubmit,
 };

@@ -43,7 +43,13 @@ const getAllVoterIssueFromDB = async (
   };
 };
 
+const getIsIssueSubmitFromDB = async (ip: string) => {
+  const isExistIp = await VoterIssue.findOne({ ip: { $eq: ip } });
+  return !!isExistIp;
+};
+
 export const VoterIssueService = {
   createVoterIssueToDB,
   getAllVoterIssueFromDB,
+  getIsIssueSubmitFromDB,
 };
