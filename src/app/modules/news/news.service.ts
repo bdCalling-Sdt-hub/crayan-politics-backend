@@ -22,6 +22,7 @@ const getAllNewsFromDB = async (
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(paginationOptions);
   const { searchTerm } = filterOptions;
+  const topNews = await News.findOne().sort({ createdAt: 'desc' });
 
   const sortConditions: { [key: string]: SortOrder } = {};
   if (sortBy && sortOrder) {
@@ -39,6 +40,8 @@ const getAllNewsFromDB = async (
       })),
     };
   }
+
+  searchConditions = { _id: { $ne: topNews._id } };
 
   const result = await News.find(searchConditions)
     .sort(sortConditions)
