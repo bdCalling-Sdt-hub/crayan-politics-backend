@@ -37,7 +37,7 @@ const getAllVoterIssue = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getIsIssueSubmit = catchAsync(async (req: Request, res: Response) => {
-  const ip = req._remoteAddress;
+  const ip = req._remoteAddress || 'default-ip';
   const result = await VoterIssueService.getIsIssueSubmitFromDB(ip);
 
   sendResponse(res, {

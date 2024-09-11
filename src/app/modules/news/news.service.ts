@@ -41,7 +41,7 @@ const getAllNewsFromDB = async (
     };
   }
 
-  searchConditions = { _id: { $ne: topNews._id } };
+  searchConditions = { _id: { $ne: topNews?._id } };
 
   const result = await News.find(searchConditions)
     .sort(sortConditions)
