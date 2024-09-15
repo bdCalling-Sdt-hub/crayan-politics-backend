@@ -11,9 +11,10 @@ export type ICandidate = {
     | 'Libertarian'
     | 'Green'
     | 'Others';
-  state: string;
+  state: string[];
   election: string;
   color: '#FF7070' | '#6788DF' | '#F5E3A4' | '#9CE7A3' | '#A6A6A6';
+  about: string;
   issues?: IIssues[];
 };
 

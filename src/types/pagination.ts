@@ -7,4 +7,5 @@ export type IPaginationOptions = {
 
 export type IFilterOptions = {
   searchTerm?: string;
+  state?: string;
 };

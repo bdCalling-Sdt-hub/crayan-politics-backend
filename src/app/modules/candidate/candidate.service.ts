@@ -25,7 +25,7 @@ const getAllCandidateFromDB = async (
 ) => {
   const { skip, limit, page, sortBy, sortOrder } =
     paginationHelper.calculatePagination(paginationOptions);
-  const { searchTerm, ...otherFilters } = filterOptions;
+  const { searchTerm, state, ...otherFilters } = filterOptions;
 
   let andConditions = [];
   if (searchTerm) {
@@ -37,6 +37,10 @@ const getAllCandidateFromDB = async (
         },
       })),
     });
+  }
+
+  if (state) {
+    andConditions.push({ state: { $in: state } });
   }
 
   if (Object.keys(otherFilters).length) {

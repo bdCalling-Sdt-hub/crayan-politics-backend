@@ -38,12 +38,16 @@ const candidateSchema = new Schema<ICandidate, CandidateModel>(
       required: true,
     },
     state: {
-      type: String,
+      type: [String],
       required: true,
     },
     color: {
       type: String,
       enum: CandidateColors,
+      required: true,
+    },
+    about: {
+      type: String,
       required: true,
     },
     issues: {
