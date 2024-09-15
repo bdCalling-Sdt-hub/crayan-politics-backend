@@ -1,6 +1,6 @@
 export type IVoterIssue = {
   state: string;
-  dateOfBirth: Date;
+  age: number;
   issues: string[];
   ip: string;
 };

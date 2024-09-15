@@ -9,8 +9,8 @@ const voterIssueSchema = new Schema<IVoterIssue>(
       type: String,
       required: true,
     },
-    dateOfBirth: {
-      type: Date,
+    age: {
+      type: Number,
       required: true,
     },
     issues: {
